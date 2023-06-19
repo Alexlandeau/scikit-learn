@@ -900,7 +900,7 @@ def non_negative_factorization(
     X,
     W=None,
     H=None,
-    n_components=None,
+    n_components="auto",
     *,
     init=None,
     update_H=True,
@@ -973,7 +973,7 @@ def non_negative_factorization(
         If `update_H=False`, it is used as a constant, to solve for W only.
         If `None`, uses the initialisation method specified in `init`.
 
-    n_components : int, default=None
+    n_components : int, default="auto"
         Number of components, if n_components is not set all features
         are kept.
 
@@ -1150,7 +1150,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
 
     def __init__(
         self,
-        n_components=None,
+        n_components="auto",
         *,
         init=None,
         beta_loss="frobenius",
@@ -1176,7 +1176,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     def _check_params(self, X):
         # n_components
         self._n_components = self.n_components
-        if self._n_components is None:
+        if self._n_components == "auto":
             self._n_components = X.shape[1]
 
         # beta_loss
@@ -1349,7 +1349,7 @@ class NMF(_BaseNMF):
 
     Parameters
     ----------
-    n_components : int, default=None
+    n_components : int, default="auto"
         Number of components, if n_components is not set all features
         are kept.
 
