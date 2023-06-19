@@ -30,7 +30,6 @@ from ..utils.validation import (
 from ..utils._param_validation import (
     Interval,
     StrOptions,
-    InvalidParameterError,
     validate_params,
 )
 
@@ -1100,30 +1099,6 @@ def non_negative_factorization(
     ...     X, n_components=2, init='random', random_state=0)
     """
 
-    # if (n_components == "auto"):
-    #     if W and H:
-    #         if W.shape[1] != H.shape[0]:
-    #             raise InvalidParameterError(
-    #             f"Incompatible array shapes. Expected W's width and H's height to be equal, but got {W.shape[1]} and {H.shape[0]} instead."
-    #             )
-    #         else:
-    #             n_components = H.shape[0]
-    #     elif H and not W:
-    #         n_components = H.shape[0]
-    #     elif W and not H:
-    #         n_components = W.shape[1]
-    #     else:
-    #         # Default to n_features
-    #         n_components = X.shape[1]
-    # else:
-    #     if any(n_components != W.shape[1],
-    #            n_components != H.shape[0],
-    #            W.shape[1] != H.shape[0]):
-    #                         raise InvalidParameterError(
-    #                             f"Incompatible array shapes. Expected n_components, W's width and H's height to be equal, but got {n_components}, {W.shape[1]} and {H.shape[0]} instead."
-    #                             )
-            
-
     est = NMF(
         n_components=n_components,
         init=init,
@@ -1157,7 +1132,11 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     __metadata_request__inverse_transform = {"W": metadata_routing.UNUSED}
 
     _parameter_constraints: dict = {
-        "n_components": [Interval(Integral, 1, None, closed="left"), None, StrOptions({"auto"})],
+        "n_components": [
+            Interval(Integral, 1, None, closed="left"),
+            None,
+            StrOptions({"auto"}),
+        ],
         "init": [
             StrOptions({"random", "nndsvd", "nndsvda", "nndsvdar", "custom"}),
             None,
@@ -1220,7 +1199,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
                 self._n_components = W.shape[1]
             else:
                 # Default to n_features
-                self._n_components = X.shape[1] 
+                self._n_components = X.shape[1]
 
         # beta_loss
         self._beta_loss = _beta_loss_to_float(self.beta_loss)
@@ -1322,10 +1301,8 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
 
         if W is not None:
             warnings.warn(
-                (
-                    "Input argument `W` was renamed to `Xt` in v1.3 and will be removed"
-                    " in v1.5."
-                ),
+                "Input argument `W` was renamed to `Xt` in v1.3 and will be removed"
+                " in v1.5.",
                 FutureWarning,
             )
             Xt = W
@@ -1598,12 +1575,10 @@ class NMF(_BaseNMF):
             )
         if self.solver == "mu" and self.init == "nndsvd":
             warnings.warn(
-                (
-                    "The multiplicative update ('mu') solver cannot update "
-                    "zeros present in the initialization, and so leads to "
-                    "poorer results when used jointly with init='nndsvd'. "
-                    "You may try init='nndsvda' or init='nndsvdar' instead."
-                ),
+                "The multiplicative update ('mu') solver cannot update "
+                "zeros present in the initialization, and so leads to "
+                "poorer results when used jointly with init='nndsvd'. "
+                "You may try init='nndsvda' or init='nndsvdar' instead.",
                 UserWarning,
             )
 
@@ -2325,10 +2300,8 @@ class MiniBatchNMF(_BaseNMF):
 
         if n_iter == self.max_iter and self.tol > 0:
             warnings.warn(
-                (
-                    f"Maximum number of iterations {self.max_iter} reached. "
-                    "Increase it to improve convergence."
-                ),
+                f"Maximum number of iterations {self.max_iter} reached. "
+                "Increase it to improve convergence.",
                 ConvergenceWarning,
             )
 
