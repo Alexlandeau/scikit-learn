@@ -942,21 +942,12 @@ def test_NMF_n_components_auto():
 
     # Neither H_true nor W_true are set, n_components is set to n_features
     W, H, _ = non_negative_factorization(X, n_components="auto")
-    assert W.shape[1] == X.shape[1] and H.shape[0] == X.shape[1]
+    assert (W.shape[1] == X.shape[1] and H.shape[0] == X.shape[1])
 
     # H_true is set, inferring n_components from it
-    W, H, _ = non_negative_factorization(X, H_true=H_true, n_components="auto")
+    W, H, _ = non_negative_factorization(X, H=H_true, n_components="auto")
     assert H.shape[0] == H_true.shape[0]
 
     # H_true is set, inferring n_components from it
-    W, H, _ = non_negative_factorization(X, W_true=W_true, n_components="auto")
+    W, H, _ = non_negative_factorization(X, W=W_true, n_components="auto")
     assert W.shape[1] == W_true.shape[1]
-
-
-
-def test_NMF_n_components_auto():
-    W_true = np.random.rand(6, 2)
-    H_true = np.random.rand(2, 5)
-    X = np.dot(W_true, H_true)
-
-    non_negative_factorization(X, H=H_true, n_components="auto", update_H=False)
