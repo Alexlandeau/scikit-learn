@@ -1100,28 +1100,28 @@ def non_negative_factorization(
     ...     X, n_components=2, init='random', random_state=0)
     """
 
-    if (n_components == "auto"):
-        if W and H:
-            if W.shape[1] != H.shape[0]:
-                raise InvalidParameterError(
-                f"Incompatible array shapes. Expected W's width and H's height to be equal, but got {W.shape[1]} and {H.shape[0]} instead."
-                )
-            else:
-                n_components = H.shape[0]
-        elif H and not W:
-            n_components = H.shape[0]
-        elif W and not H:
-            n_components = W.shape[1]
-        else:
-            # Default to n_features
-            n_components = X.shape[1]
-    else:
-        if any(n_components != W.shape[1],
-               n_components != H.shape[0],
-               W.shape[1] != H.shape[0]):
-                            raise InvalidParameterError(
-                                f"Incompatible array shapes. Expected n_components, W's width and H's height to be equal, but got {n_components}, {W.shape[1]} and {H.shape[0]} instead."
-                                )
+    # if (n_components == "auto"):
+    #     if W and H:
+    #         if W.shape[1] != H.shape[0]:
+    #             raise InvalidParameterError(
+    #             f"Incompatible array shapes. Expected W's width and H's height to be equal, but got {W.shape[1]} and {H.shape[0]} instead."
+    #             )
+    #         else:
+    #             n_components = H.shape[0]
+    #     elif H and not W:
+    #         n_components = H.shape[0]
+    #     elif W and not H:
+    #         n_components = W.shape[1]
+    #     else:
+    #         # Default to n_features
+    #         n_components = X.shape[1]
+    # else:
+    #     if any(n_components != W.shape[1],
+    #            n_components != H.shape[0],
+    #            W.shape[1] != H.shape[0]):
+    #                         raise InvalidParameterError(
+    #                             f"Incompatible array shapes. Expected n_components, W's width and H's height to be equal, but got {n_components}, {W.shape[1]} and {H.shape[0]} instead."
+    #                             )
             
 
     est = NMF(
@@ -1203,13 +1203,28 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     def _check_params(self, X):
         # n_components
         self._n_components = self.n_components
-        if self._n_components == None:
+        if self._n_components is None:
             self._n_components = X.shape[1]
 
         # beta_loss
         self._beta_loss = _beta_loss_to_float(self.beta_loss)
 
     def _check_w_h(self, X, W, H, update_H):
+        # n_components
+        if self._n_components == "auto":
+            if W and H:
+                self._n_components = H.shape[0]
+            elif H and not W:
+                self._n_components = H.shape[0]
+            elif W and not H:
+                self._n_components = W.shape[1]
+            else:
+                # Default to n_features
+                self._n_components = X.shape[1] 
+
+        # beta_loss
+        self._beta_loss = _beta_loss_to_float(self.beta_loss)
+
         """Check W and H, or initialize them."""
         n_samples, n_features = X.shape
         if self.init == "custom" and update_H:
