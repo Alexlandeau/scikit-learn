@@ -1191,11 +1191,11 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     def _check_w_h(self, X, W, H, update_H):
         # n_components
         if self._n_components == "auto":
-            if W and H:
+            if W is not None and H is not None:
                 self._n_components = H.shape[0]
-            elif H and not W:
+            elif H is not None and W is None:
                 self._n_components = H.shape[0]
-            elif W and not H:
+            elif W is not None and H is None:
                 self._n_components = W.shape[1]
             else:
                 # Default to n_features
