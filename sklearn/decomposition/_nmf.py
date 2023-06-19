@@ -902,7 +902,7 @@ def non_negative_factorization(
     X,
     W=None,
     H=None,
-    n_components="auto",
+    n_components=None,
     *,
     init=None,
     update_H=True,
@@ -975,7 +975,7 @@ def non_negative_factorization(
         If `update_H=False`, it is used as a constant, to solve for W only.
         If `None`, uses the initialisation method specified in `init`.
 
-    n_components : int, default="auto"
+    n_components : int or {'auto'} or None, default=None
         Number of components, if n_components is not set all features
         are kept.
 
@@ -1157,7 +1157,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     __metadata_request__inverse_transform = {"W": metadata_routing.UNUSED}
 
     _parameter_constraints: dict = {
-        "n_components": [Interval(Integral, 1, None, closed="left"), None],
+        "n_components": [Interval(Integral, 1, None, closed="left"), None, StrOptions({"auto"})],
         "init": [
             StrOptions({"random", "nndsvd", "nndsvda", "nndsvdar", "custom"}),
             None,
@@ -1376,7 +1376,7 @@ class NMF(_BaseNMF):
 
     Parameters
     ----------
-    n_components : int, default=None
+    n_components : int or {'auto'} or None, default=None
         Number of components, if n_components is not set all features
         are kept.
 
