@@ -933,3 +933,11 @@ def test_NMF_inverse_transform_W_deprecation():
 
     with pytest.warns(FutureWarning, match="Input argument `W` was renamed to `Xt`"):
         est.inverse_transform(W=Xt)
+
+
+def test_NMF_n_components_auto():
+    W_true = np.random.rand(6, 2)
+    H_true = np.random.rand(2, 5)
+    X = np.dot(W_true, H_true)
+
+    non_negative_factorization(X, H=H_true, n_components="auto", update_H=False)
