@@ -30,8 +30,10 @@ from ..utils.validation import (
 from ..utils._param_validation import (
     Interval,
     StrOptions,
+    InvalidParameterError,
     validate_params,
 )
+
 from ..utils import metadata_routing
 
 
@@ -1097,6 +1099,31 @@ def non_negative_factorization(
     >>> W, H, n_iter = non_negative_factorization(
     ...     X, n_components=2, init='random', random_state=0)
     """
+
+    if (n_components == "auto"):
+        if W and H:
+            if W.shape[1] != H.shape[0]:
+                raise InvalidParameterError(
+                f"Incompatible array shapes. Expected W's width and H's height to be equal, but got {W.shape[1]} and {H.shape[0]} instead."
+                )
+            else:
+                n_components = H.shape[0]
+        elif H and not W:
+            n_components = H.shape[0]
+        elif W and not H:
+            n_components = W.shape[1]
+        else:
+            # Default to n_features
+            n_components = X.shape[1]
+    else:
+        if any(n_components != W.shape[1],
+               n_components != H.shape[0],
+               W.shape[1] != H.shape[0]):
+                            raise InvalidParameterError(
+                                f"Incompatible array shapes. Expected n_components, W's width and H's height to be equal, but got {n_components}, {W.shape[1]} and {H.shape[0]} instead."
+                                )
+            
+
     est = NMF(
         n_components=n_components,
         init=init,
@@ -1150,7 +1177,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
 
     def __init__(
         self,
-        n_components="auto",
+        n_components=None,
         *,
         init=None,
         beta_loss="frobenius",
@@ -1176,7 +1203,7 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     def _check_params(self, X):
         # n_components
         self._n_components = self.n_components
-        if self._n_components == "auto":
+        if self._n_components == None:
             self._n_components = X.shape[1]
 
         # beta_loss
@@ -1349,7 +1376,7 @@ class NMF(_BaseNMF):
 
     Parameters
     ----------
-    n_components : int, default="auto"
+    n_components : int, default=None
         Number of components, if n_components is not set all features
         are kept.
 
