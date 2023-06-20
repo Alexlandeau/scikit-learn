@@ -1102,7 +1102,7 @@ def non_negative_factorization(
     ...     X, n_components=2, init='random', random_state=0)
     """
 
-    if n_components == "warn":
+    if n_components == "warn" or n_components is None:
         warnings.warn("The default value of `n_components` will change from "
                       "`None` to `'auto'` in 1.5.", FutureWarning)
         n_components = None
