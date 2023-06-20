@@ -1210,9 +1210,6 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
                 # Default to n_features
                 self._n_components = X.shape[1]
 
-        # beta_loss
-        self._beta_loss = _beta_loss_to_float(self.beta_loss)
-
         """Check W and H, or initialize them."""
         n_samples, n_features = X.shape
         if self.init == "custom" and update_H:
