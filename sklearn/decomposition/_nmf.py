@@ -975,8 +975,9 @@ def non_negative_factorization(
 
     n_components : int or {'auto'} or None, default=None
         Number of components, if n_components is not set all features
-        are kept. 
-        If `n_components='auto'`, the number of components is automatically infered from W or H shapes.
+        are kept.
+        If `n_components='auto'`, the number of components is automatically infered
+        from W or H shapes.
 
         .. versionchanged:: 1.3
            The default value of `n_components` will change to "auto" in v1.5.
@@ -1103,8 +1104,11 @@ def non_negative_factorization(
     """
 
     if n_components == "warn" or n_components is None:
-        warnings.warn("The default value of `n_components` will change from "
-                      "`None` to `'auto'` in 1.5.", FutureWarning)
+        warnings.warn(
+            "The default value of `n_components` will change from "
+            "`None` to `'auto'` in 1.5.",
+            FutureWarning,
+        )
         n_components = None
 
     est = NMF(
