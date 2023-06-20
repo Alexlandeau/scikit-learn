@@ -900,7 +900,7 @@ def non_negative_factorization(
     X,
     W=None,
     H=None,
-    n_components=None,
+    n_components="warn",
     *,
     init=None,
     update_H=True,
@@ -976,6 +976,9 @@ def non_negative_factorization(
     n_components : int or {'auto'} or None, default=None
         Number of components, if n_components is not set all features
         are kept.
+
+        .. versionchanged:: 1.3
+           The default value of `n_components` will change to "auto" in v1.5.
 
     init : {'random', 'nndsvd', 'nndsvda', 'nndsvdar', 'custom'}, default=None
         Method used to initialize the procedure.
@@ -1097,6 +1100,11 @@ def non_negative_factorization(
     >>> W, H, n_iter = non_negative_factorization(
     ...     X, n_components=2, init='random', random_state=0)
     """
+
+    if n_components == "warn":
+        warnings.warn("The default value of `n_components` will change from "
+                      "`None` to `'auto'` in 1.5.", FutureWarning)
+        n_components = None
 
     est = NMF(
         n_components=n_components,
