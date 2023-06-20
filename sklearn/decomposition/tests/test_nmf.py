@@ -951,3 +951,8 @@ def test_NMF_n_components_auto():
     # H_true is set, inferring n_components from it
     W, H, _ = non_negative_factorization(X, W=W_true, n_components="auto")
     assert W.shape[1] == W_true.shape[1]
+
+def test_NMF_n_components_None_deprecation():
+    X = np.random.rand(6, 5)
+    with pytest.warns(FutureWarning, match="The default value of `n_components` will change from"):
+        non_negative_factorization(X)
