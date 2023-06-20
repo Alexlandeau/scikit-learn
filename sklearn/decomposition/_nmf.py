@@ -32,7 +32,6 @@ from ..utils._param_validation import (
     StrOptions,
     validate_params,
 )
-
 from ..utils import metadata_routing
 
 
@@ -1191,12 +1190,13 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
     def _check_w_h(self, X, W, H, update_H):
         # n_components
         if self._n_components == "auto":
-            if W is not None and H is not None:
+            if W is not None:
+                if H is not None:
+                    self._n_components = H.shape[0]
+                else:
+                    self._n_components = W.shape[1]
+            elif H is not None:
                 self._n_components = H.shape[0]
-            elif H is not None and W is None:
-                self._n_components = H.shape[0]
-            elif W is not None and H is None:
-                self._n_components = W.shape[1]
             else:
                 # Default to n_features
                 self._n_components = X.shape[1]
@@ -1301,8 +1301,10 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
 
         if W is not None:
             warnings.warn(
+                (
                 "Input argument `W` was renamed to `Xt` in v1.3 and will be removed"
-                " in v1.5.",
+                " in v1.5."
+                ),
                 FutureWarning,
             )
             Xt = W
@@ -1575,10 +1577,12 @@ class NMF(_BaseNMF):
             )
         if self.solver == "mu" and self.init == "nndsvd":
             warnings.warn(
+                (
                 "The multiplicative update ('mu') solver cannot update "
                 "zeros present in the initialization, and so leads to "
                 "poorer results when used jointly with init='nndsvd'. "
                 "You may try init='nndsvda' or init='nndsvdar' instead.",
+                ),
                 UserWarning,
             )
 
@@ -2300,8 +2304,10 @@ class MiniBatchNMF(_BaseNMF):
 
         if n_iter == self.max_iter and self.tol > 0:
             warnings.warn(
+                (
                 f"Maximum number of iterations {self.max_iter} reached. "
                 "Increase it to improve convergence.",
+                ),
                 ConvergenceWarning,
             )
 
